@@ -13,16 +13,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ProductContext>(options =>
 {
-    if (builder.Environment.IsDevelopment())
-    {
-        var cs = builder.Configuration.GetConnectionString("LocalConnection");
-        options.UseSqlServer(cs);
-    }
-    else
-    {
         var cs = builder.Configuration.GetConnectionString("ProductContext");
         options.UseSqlServer(cs);
-    }
 });
 
 

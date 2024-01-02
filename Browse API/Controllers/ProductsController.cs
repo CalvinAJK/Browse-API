@@ -1,4 +1,5 @@
 ﻿using Browse_API.Data;
+using Browse_API.DTO;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -13,13 +14,17 @@ public class ProductsController : ControllerBase
         _context = context;
     }
 
-    // ... Existing code ...
-
     [HttpGet]
-    public ActionResult<IEnumerable<Product>> GetProducts()
+    public ActionResult<IEnumerable<ProductDTO>> GetProducts()
     {
         var products = _context.Products.ToList();
-        return Ok(products);
+        var productDtos = products.Select(product => new ProductDTO
+        {
+            Name = product.Name,
+            Description = product.Description,
+            Price = product.Price,
+        }).ToList();
+        return Ok(productDtos);
     }
 
 
