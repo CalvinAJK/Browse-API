@@ -1,5 +1,6 @@
 ﻿using Browse_API.Data;
 using Browse_API.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -15,6 +16,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     public ActionResult<IEnumerable<ProductDTO>> GetProducts()
     {
         var products = _context.Products.ToList();
