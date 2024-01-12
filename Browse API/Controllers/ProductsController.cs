@@ -1,5 +1,5 @@
 ﻿using Browse_API.Data;
-using Browse_API.DTO;
+using Browse_API.Services.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -19,7 +19,7 @@ public class ProductsController : ControllerBase
     [Authorize]
     public ActionResult<IEnumerable<ProductDTO>> GetProducts()
     {
-        var products = _context.Products.ToList();
+        var products = _context.Products.ToList();  
         var productDtos = products.Select(product => new ProductDTO
         {
             Name = product.Name,

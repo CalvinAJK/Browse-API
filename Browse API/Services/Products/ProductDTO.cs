@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace Browse_API.DTO
+namespace Browse_API.Services.Products
 {
     public class ProductDTO
     {
