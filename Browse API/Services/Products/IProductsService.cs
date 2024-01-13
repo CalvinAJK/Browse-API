@@ -7,6 +7,6 @@ namespace Browse_API.Services.Products
 /*        Task<IEnumerable<ProductDTO>> GetProducts();
 
         Task<IEnumerable<Product>> SearchProducts(string searchTerm);*/
-//test
+
     }
 }

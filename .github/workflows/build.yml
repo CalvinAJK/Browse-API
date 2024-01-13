@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
   
 env:
-  TEST_PROJECT: 'Browse-Api.Tests/Browse API\Browse API.csproj'
+  TEST_PROJECT: 'Browse-Api.Tests/Browse API.csproj'
   
 jobs:
   build:
