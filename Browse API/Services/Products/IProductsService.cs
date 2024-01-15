@@ -6,7 +6,7 @@ namespace Browse_API.Services.Products
     {
         Task<IEnumerable<ProductDTO>> GetProductsAsync();
 
-        /*Task<IEnumerable<Product>> SearchProducts(string searchTerm);*/
+        Task<IEnumerable<ProductDTO>> GetProductsByNameAsync(string searchTerm);
 
     }
 }

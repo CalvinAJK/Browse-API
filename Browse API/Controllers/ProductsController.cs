@@ -24,8 +24,8 @@ public class ProductsController : ControllerBase
         _productsRepo = productsRepo;
     }
 
-    [HttpGet]
-    /*[Authorize]*/
+    [HttpGet("UnderCutters")]
+    [Authorize]
     public async Task<IActionResult> GetProducts()
     {
         IEnumerable<ProductDTO> products = null;
@@ -42,6 +42,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet("Repo")]
+    [Authorize]
     public async Task<IActionResult> Repo()
     {
         IEnumerable<Product> products = null;
@@ -58,20 +59,29 @@ public class ProductsController : ControllerBase
     }
 
 
-/*    [HttpGet("search")]
+    [HttpGet("UCSearch")]
     [Authorize]
-    public ActionResult<IEnumerable<Product>> SearchProducts([FromQuery] string searchTerm)
+    public async Task<IActionResult> GetProducts(string searchTerm = null)
     {
-        if (string.IsNullOrEmpty(searchTerm))
+        IEnumerable<ProductDTO> products = null;
+        try
         {
-            return BadRequest("Search term is required.");
+            if (string.IsNullOrEmpty(searchTerm))
+            {
+                products = await _productsService.GetProductsAsync();
+            }
+            else
+            {
+                products = await _productsService.GetProductsByNameAsync(searchTerm);
+            }
         }
-
-        var matchingProducts = _context.Products
-            .Where(p => p.Name.Contains(searchTerm) || p.Description.Contains(searchTerm))
-            .ToList();
-
-        return Ok(matchingProducts);
-    }*/
+        catch
+        {
+            _logger.LogWarning("Exception occurred using Products service");
+            products = Array.Empty<ProductDTO>();
+        }
+        return Ok(products.ToList());
+    }
 
 }
+

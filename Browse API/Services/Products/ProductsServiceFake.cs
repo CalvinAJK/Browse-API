@@ -15,8 +15,14 @@
             return Task.FromResult(products);
         }
 
+        public Task<IEnumerable<ProductDTO>> GetProductsByNameAsync(string searchTerm)
+        {
+            var filteredProducts = _products
+                .Where(p => p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                            p.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                .AsEnumerable();
 
-
-
+            return Task.FromResult(filteredProducts);
+        }
     }
 }
