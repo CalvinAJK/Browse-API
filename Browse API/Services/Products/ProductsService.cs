@@ -7,6 +7,12 @@
         public ProductsService(HttpClient client, IConfiguration configuration)
         {
             var baseUrl = configuration["WebServices:UnderCutters:BaseURL"] ?? "";
+
+            if (string.IsNullOrEmpty(baseUrl))
+            {
+                throw new InvalidOperationException("BaseURL is missing or empty in configuration.");
+            }
+
             client.BaseAddress = new Uri(baseUrl);
             client.Timeout = TimeSpan.FromSeconds(5);
             client.DefaultRequestHeaders.Add("Accept", "application/json");
