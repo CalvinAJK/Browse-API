@@ -3,8 +3,9 @@ using Browse_API.Services.Products;
 using Browse_API.Services.ProductsRepo;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
+using Polly;
+using Polly.Extensions.Http;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,8 @@ if (builder.Environment.IsDevelopment()){
 }
 else
 {
-    /*builder.Services.AddHttpClient<IProductsService, ProductsService>();*/
+    builder.Services.AddHttpClient<IProductsService, ProductsService>()
+                    .AddPolicyHandler(GetRetryPolicy());
     builder.Services.AddTransient<IProductsRepo, ProductsRepo>();
 }
 
@@ -93,3 +95,12 @@ app.UseHttpsRedirection();
 app.MapControllers();
 
 app.Run();
+
+IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+{
+    return HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+        .WaitAndRetryAsync(5, retryAttempt =>
+            TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+}

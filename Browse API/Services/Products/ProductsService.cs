@@ -1,19 +1,25 @@
 ﻿namespace Browse_API.Services.Products
 {
-    public class ProductsService
+    public class ProductsService : IProductsService
     {
+        private readonly HttpClient _client;
 
-        private readonly ProductDTO[] _products =
+        public ProductsService(HttpClient client, IConfiguration configuration)
         {
-            new ProductDTO { Name = "Fake product A", Description = "Fake Description A", Price = 11},
-            new ProductDTO { Name = "Fake product B", Description = "Fake Description B", Price = 22},
-            new ProductDTO { Name = "Fake product C", Description = "Fake Description C", Price = 33},
-        };
+            var baseUrl = configuration["WebServices:UnderCutters:BaseURL"] ?? "";
+            client.BaseAddress = new Uri(baseUrl);
+            client.Timeout = TimeSpan.FromSeconds(5);
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+            _client = client;
+        }
 
-        public Task<IEnumerable<ProductDTO>> GetProductsAsync()
+        public async Task<IEnumerable<ProductDTO>> GetProductsAsync()
         {
-            var products = _products.AsEnumerable();
-            return Task.FromResult(products);
+            var uri = "api/product";
+            var response = await _client.GetAsync(uri);
+            response.EnsureSuccessStatusCode();
+            var products = await response.Content.ReadAsAsync<IEnumerable<ProductDTO>>();
+            return products;
         }
 
 
