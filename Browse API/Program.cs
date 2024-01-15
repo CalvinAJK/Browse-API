@@ -1,5 +1,6 @@
 using Browse_API.Data;
 using Browse_API.Services.Products;
+using Browse_API.Services.ProductsRepo;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -10,11 +11,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 if (builder.Environment.IsDevelopment()){
     builder.Services.AddSingleton<IProductsService, ProductsServiceFake>();
+    builder.Services.AddSingleton<IProductsRepo, ProductsRepoFake>();
 }
-/*else
+else
 {
-    builder.Services.AddHttpClient<IProductsService, ProductsService>();
-}*/
+    /*builder.Services.AddHttpClient<IProductsService, ProductsService>();*/
+    builder.Services.AddTransient<IProductsRepo, ProductsRepo>();
+}
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -54,6 +57,25 @@ builder.Services.AddAuthorization();
 
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var env = services.GetRequiredService<IWebHostEnvironment>();
+    if (env.IsDevelopment())
+    {
+        var context = services.GetRequiredService<ProductContext>();
+        try
+        {
+            ProductsInitializer.SeedTestingData(context).Wait();
+        }
+        catch (Exception ex)
+        {
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            logger.LogDebug("Seeding test data failed");
+        }
+    }
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
