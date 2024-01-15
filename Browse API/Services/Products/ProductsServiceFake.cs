@@ -4,9 +4,9 @@
     {
         private readonly ProductDTO[] _products =
         {
-            new ProductDTO { Name = "Fake product A", Description = "Fake Description A", Price = 11},
-            new ProductDTO { Name = "Fake product B", Description = "Fake Description B", Price = 22},
-            new ProductDTO { Name = "Fake product C", Description = "Fake Description C", Price = 33},
+            new ProductDTO { Name = "Fake product A", Description = "Fake Description A", Price = 11, Stock = true},
+            new ProductDTO { Name = "Fake product B", Description = "Fake Description B", Price = 22, Stock = true},
+            new ProductDTO { Name = "Fake product C", Description = "Fake Description C", Price = 33, Stock = false},
         };
 
         public Task<IEnumerable<ProductDTO>> GetProductsAsync()
