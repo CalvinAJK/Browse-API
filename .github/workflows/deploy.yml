@@ -4,11 +4,11 @@
 name: Build and deploy ASP.Net Core app to Azure Web App - thamco-browse-api
 
 on:
-  push:
-    branches:
-      - master
   workflow_dispatch:
-
+  
+env:
+  TEST_PROJECT: 'Browse-Api.Tests/Browse-Api.Tests.csproj'
+  
 jobs:
   build:
     runs-on: windows-latest
@@ -22,8 +22,14 @@ jobs:
           dotnet-version: '3.1'
           include-prerelease: true
 
+      - name: Restore dependencies
+        run: dotnet restore
+
       - name: Build with dotnet
         run: dotnet build --configuration Release
+
+      - name: Run unit tests
+        run: dotnet test ${{ env.TEST_PROJECT }} --configuration Release --no-build --logger trx --results-directory ./test-results
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
@@ -37,9 +43,6 @@ jobs:
   deploy:
     runs-on: windows-latest
     needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     
     steps:
       - name: Download artifact from build job
@@ -52,6 +55,5 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'thamco-browse-api'
-          slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_88EA88BCF23443F2BD47DA856373BB90 }}
