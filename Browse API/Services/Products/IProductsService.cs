@@ -2,11 +2,11 @@
 
 namespace Browse_API.Services.Products
 {
-    public class IProductsService
+    public interface IProductsService
     {
-/*        Task<IEnumerable<ProductDTO>> GetProducts();
+        Task<IEnumerable<ProductDTO>> GetProductsAsync();
 
-        Task<IEnumerable<Product>> SearchProducts(string searchTerm);*/
+        /*Task<IEnumerable<Product>> SearchProducts(string searchTerm);*/
 
     }
 }

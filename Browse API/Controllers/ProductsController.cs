@@ -8,29 +8,37 @@ using System;
 [ApiController]
 public class ProductsController : ControllerBase
 {
-    private readonly ProductContext _context;
+    private readonly ILogger _logger;
+    private readonly IProductsService _productsService;
 
-    public ProductsController(ProductContext context)
+
+    public ProductsController(ILogger<ProductsController> logger,
+                                 IProductsService productsService)
     {
-        _context = context;
+        _logger = logger;
+        _productsService = productsService;
     }
 
     [HttpGet]
-    [Authorize]
-    public ActionResult<IEnumerable<ProductDTO>> GetProducts()
+    /*[Authorize]*/
+    public async Task<IActionResult> GetProducts()
     {
-        var products = _context.Products.ToList();  
-        var productDtos = products.Select(product => new ProductDTO
+        IEnumerable<ProductDTO> products = null;
+        try
         {
-            Name = product.Name,
-            Description = product.Description,
-            Price = product.Price,
-        }).ToList();
-        return Ok(productDtos);
+            products = await _productsService.GetProductsAsync();
+        }
+        catch
+        {
+            _logger.LogWarning("Exception occured using Products service");
+            products = Array.Empty<ProductDTO>();
+        }
+        return Ok(products.ToList());
     }
 
 
-    [HttpGet("search")]
+/*    [HttpGet("search")]
+    [Authorize]
     public ActionResult<IEnumerable<Product>> SearchProducts([FromQuery] string searchTerm)
     {
         if (string.IsNullOrEmpty(searchTerm))
@@ -43,6 +51,6 @@ public class ProductsController : ControllerBase
             .ToList();
 
         return Ok(matchingProducts);
-    }
+    }*/
 
 }
